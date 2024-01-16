@@ -10,20 +10,14 @@ local newWeatherTimer = Config.NewWeatherTimer
 --- @param src string | number - source to check
 --- @return int - source
 local function getSource(src)
-    if src == '' then
-        return 0
-    end
-    return src
+    return src == '' and 0 or src
 end
 
 --- Does source have permissions to run admin commands
 --- @param src number - Source to check
 --- @return boolean - has permission
 local function isAllowedToChange(src)
-    if src == 0 or QBCore.Functions.HasPermission(src, "admin") or IsPlayerAceAllowed(src, 'command') then
-        return true
-    end
-    return false
+    return src == 0 or QBCore.Functions.HasPermission(src, "admin") or IsPlayerAceAllowed(src, 'command') 
 end
 
 --- Sets time offset based on minutes provided
@@ -268,7 +262,7 @@ CreateThread(function()
     local previous = 0
     while true do
         Wait(0)
-        local newBaseTime = os.time(os.date("!*t")) / 8 + 360 --Set the server time depending of OS time
+        local newBaseTime = os.time(os.date("!*t")) / 2 + 360 --Set the server time depending of OS time
         if (newBaseTime % 60) ~= previous then --Check if a new minute is passed
             previous = newBaseTime % 60 --Only update time with plain minutes, seconds are handled in the client
             if freezeTime then
@@ -281,7 +275,7 @@ end)
 
 CreateThread(function()
     while true do
-        Wait(5000)--Change to send every minute in game sync
+        Wait(2000)--Change to send every minute in game sync
         TriggerClientEvent('qb-weathersync:client:SyncTime', -1, baseTime, timeOffset, freezeTime)
     end
 end)
